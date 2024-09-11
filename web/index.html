@@ -1,0 +1,879 @@
+<!--
+    Working version
+
+    The code should preferably be minimised and gzipped before use
+    color template: https://colorhunt.co/palette/222831393e46ffd369eeeeee
+-->
+<!-- If you are reading this, you are a real tinkerer! -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>myLightbox</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"> <!--Icons-->
+    <style>
+
+    /* General styling */
+    body {
+        font-family: 'Arial', sans-serif;
+        margin: 0;
+        padding: 0;
+        /* background-color: #f0f0f0; */
+        background-color: #222831;
+    }
+    main {
+        max-width: 600px;
+        margin: auto;
+        padding: 20px;
+    }
+
+    footer {
+        background-color: #393E46;
+        color: white;
+        text-align: center;
+        padding: 10px;
+    }
+    article {
+        background-color: #393E46;
+        margin-bottom: 20px;
+        padding: 20px;
+        padding-top: 10px;
+        border-radius: 10px;
+    }
+    h1, h2, h3 {
+        color: #FFD369;
+    }
+    form {
+        display: flex;
+        flex-direction: column;
+    }
+    input, select {
+        padding: 8px;
+        border: none;
+        border-radius: 4px;
+        box-sizing: border-box;
+        background-color: #EEEEEE;
+        margin: 10px;
+        max-width: 100px;
+        width: 100%;
+    }
+    p, label, i {
+        color: #EEEEEE;
+    }
+    button i, label i {
+        color: #222831;
+    }
+
+    /* Styling for different inputs */
+    #costumize_matrix button, #settings_article button {
+        width: 100%;
+    }
+    #color_picker {
+        display: block;
+        margin: 0 auto;
+        margin-bottom: 5%;
+        min-height: 50px;
+        border: none;
+        padding: 5px;
+        cursor: pointer;
+        min-width: 100%;
+    }
+    #color_picker:hover {
+        background-color: #EEEEEE;
+    }
+
+    /* Styling for sliders */
+    .slider {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 100%;
+        height: 8px;
+        border-radius: 5px;
+        background: #d3d3d3;
+        outline: none;
+        opacity: 0.7;
+        -webkit-transition: .2s;
+        transition: opacity .2s;
+    }
+    .slider:hover {
+        opacity: 1;
+    }
+    .slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        background: #FFD369;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+    .slider::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        background: black;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+    #brightness_slider {
+        margin: 5%;
+    }
+    button, .file-upload {
+        border-style: solid;
+        border-radius: 4px;
+        padding: 12px;
+        border-width: 2px;
+        margin: 5px;
+
+        text-decoration: none;
+        text-align: center;
+        
+        font-size: 16px;
+        background-color: #FFD369;
+        color: black;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    button:hover, .file-upload:hover {
+        background-color: #EEEEEE;
+    }
+
+    /* Styling for controls */
+    #matrix_controls .material-icons {
+        font-size: 150%;
+    }
+    #matrix_controls button{
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center; /* Vertical centering */
+        font-size: 120%;
+    }
+
+    /* Style for separation line */
+    .separation-line {
+        border-top: 1px solid #EEEEEE;
+        margin: 20px 0; /* Adjust margin as needed */
+    }
+
+    /* For simple placement*/
+    .align_right {
+        margin-left: auto;
+    }
+    .align_horisontaly {
+        display:flex;
+        align-items: center;
+    }
+    .align_verticaly {
+        display:flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .space_evenly {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-evenly;
+        align-items: center;
+    } 
+    .scrollable-container {
+        overflow-x: auto; /* Enable horizontal scrolling */
+        white-space: nowrap; /* Prevent wrapping of child elements */
+        max-width: 100%; /* Ensure the container doesn't exceed its parent's width */
+    }
+    .full-width {
+        width: 100%;
+    }
+    /* #fileForm button,label { kan slettes
+        display: flex;
+        justify-content: space-between;
+    } */
+    .sep_buttons button,label {
+
+        display: flex;
+        justify-content: space-between;
+    }
+
+    /* Costumization article */
+
+    #costumize_matrix section {
+        padding: 2%;
+    }
+    #costumize_matrix section button {
+        width: 98%;
+        margin-bottom: 2%;
+    }
+
+    #costumize_matrix section label {
+        margin-bottom: 2%;
+    }
+
+    /* Settings article */
+    #settings_article section {
+        display: flex;
+        align-items: center;
+        padding: 1%;
+    }
+    #settings_article section section {
+        border-top: 1px solid #EEEEEE;
+        margin: 0;
+        width: 100%;
+    }
+    #settings_article section .material-icons {
+        font-size: 36px;
+        margin-right: 10%;
+    }
+    #settings_article section input[type="number"] {
+        width: 50%;
+    }
+    #brightness_value_p {
+        display: block; /* Ensure the brightness value is displayed as a block */
+        text-align: center; /* Align the brightness value to the center */
+    }
+
+    /* Style for the circle */
+    .circle {
+        width: 10vw; /* Adjust according to your preference */
+        height: 10vw; /* Adjust according to your preference */
+        max-width: 70px; /* Adjust the maximum width as needed */
+        max-height: 70px;
+        aspect-ratio: 1; /* Maintain a 1:1 aspect ratio */
+        border-radius: 50%; /* Ensures the element is a circle */
+        border-style: solid;
+        background-color: #EEEEEE;
+        cursor: pointer;
+    }
+
+    /* Styling for the pixel grid */
+    .pixel {
+        aspect-ratio: 1/1;
+        margin: 1px;
+        background-color: black;
+        border: 1px solid black;
+    }
+    .display_pixels {
+        width: 100%;
+        max-width: 400px;
+        display: grid;
+        grid-template-columns: repeat(16, 1fr);
+        grid-template-rows: repeat(16, 1fr);
+        margin: auto;
+        background-color: #EEEEEE;
+        box-sizing: border-box;
+        padding: 2px;
+    }
+
+    /*Various*/
+    .image_section {
+        margin: 5%;
+    }
+    #quick_colores {
+        margin: 2%;
+    }
+    .green_hover:hover {
+        background-color:#4CAF50;
+    }
+    .del_button {
+        display: flex;
+        justify-content: space-between;
+        align-items: center; /* Vertical centering */
+        font-size: 120%;
+        text-align: center;
+        border-style: none;
+        background-color: red;
+    }
+    .file-upload {
+        background-color: #FFD369;
+        display: flex;
+        border-style: none;
+        text-align: center;
+    }
+    .file-upload button {
+        width: auto;
+    }
+    .file-upload .material-icons {
+        margin-right: auto;
+    }
+    #imageInput {
+        display: none;
+    }
+
+    /* Media Query for smaller screens */
+    @media screen and (max-width: 600px) {
+        #pixelGrid {
+            max-width: 100%;
+        }
+    }
+
+    </style>
+</head>
+<body>
+    <!-- Main content starting here -->
+    <main>
+        <!-- <header>
+            <h1> Lightbox controls </h1>
+        </header> -->
+        <article>
+            <h2> Preview </h2>
+            <div id="pixelGrid" class="display_pixels">
+                <!-- Pixel grid will be displayed here -->
+            </div>
+        </article>
+
+        <article id="matrix_controls" >
+            <section class="align_horisontaly">
+                <button onclick="adjust_event_pos(-1)"><i class="material-icons">arrow_back</i>Previous</button>
+                <button onclick="adjust_event_pos(1)">Next<i class="material-icons">arrow_forward</i></button>
+            </section>
+           
+        </article>
+        
+        <!-- Article for coloring optiones -->
+        <article id="costumize_matrix">
+            <h2> Customize </h2>
+            <input type="color" id="color_picker">
+            <section class="space_evenly" id="quick_colores">
+                <div id="red_circle" class="circle" style="background-color: #ff0000;" onclick="set_color_picker('#ff0000')"></div>
+                <div id="red_circle" class="circle" style="background-color: #00ff00;" onclick="set_color_picker('#00ff00')"></div>
+                <div id="red_circle" class="circle" style="background-color: #0000ff;" onclick="set_color_picker('#0000ff')"></div>
+                <div id="red_circle" class="circle" style="background-color: #ffff00;" onclick="set_color_picker('#ffff00')"></div>
+                <div id="red_circle" class="circle" style="background-color: white;" onclick="set_color_picker('#ffffff')"></div>
+                <div id="red_circle" class="circle" style="background-color: black;" onclick="set_color_picker('#000000')"></div>
+            </section>
+            <section class="align_horisontaly sep_buttons">
+                <button type="button" onclick="convert_image_to_PPM(true)"><i class="material-icons">undo</i>Revert</button>
+                <!-- <button id="convert_and_send" class="green_hover" onclick="convert_div_and_send()">Send</button> -->
+                <button onclick="fill_color()"><i class="material-icons">format_color_fill</i>Fill color</button>
+            </section>
+            <section class="sep_buttons">
+                <button id="convert_and_send" class="green_hover" onclick="convert_div_and_send()"><i class="material-icons">upload</i>Upload image</button>
+                <label for="imageInput" class="file-upload"><i class="material-icons">folder</i>Choose image</label>
+                <input type="file" id="imageInput" accept=".jpg, .jpeg, .png" onchange="convert_image_to_PPM(true)">    
+                <button type="button" onclick="get_image_names()"><i class="material-icons">image</i>View all images</button>
+            </section>
+            <div id="display_images" class="align_horisontaly scrollable-container"></div>
+        </article>
+
+        <!-- Article with buttons for ajusting images -->
+        <!-- <article>
+            <form id="fileForm" enctype="multipart/form-data">
+                <h2> Images </h2>
+                <button type="button" onclick="convert_image_to_PPM(true)"><i class="material-icons">undo</i>Revert</button>
+                <button type="button" onclick="convert_image_to_PPM(false,true)"><i class="material-icons">upload</i>Upload image</button>
+                <label for="imageInput" class="file-upload"><i class="material-icons">folder</i>Choose image</label>
+                <input type="file" id="imageInput" accept=".jpg, .jpeg, .png" onchange="convert_image_to_PPM(true)">
+                <button type="button" onclick="get_image_names()"><i class="material-icons">image</i>View all images</button>
+                <div id="display_images" class="align_horisontaly scrollable-container"></div>
+            </form>
+        </article> -->
+
+        <!-- Article for settings -->
+        <article id="settings_article">
+            <h2> Matrix settings </h2>
+            <section class="align_horisontaly">
+                <i class="material-icons">location_on</i>
+                <section class="align_horisontaly">
+                    <label for="location">Location</label>
+                    <div class="align_right align_horisontaly">
+                        <input type="tel" placeholder="Longitude" pattern="^-?\d+(\.\d+)?$" title="Enter a valid longitude" id="lon_input">
+                        <input type="tel" placeholder="Latitude" pattern="^-?\d+(\.\d+)?$" title="Enter a valid latitude" id="lat_input">
+                    </div>
+                </section>  
+            </section>
+            
+            <section class="align_horisontaly">
+                <i class="material-icons" >device_thermostat</i>
+                <section class="align_horisontaly" style="width: 100%;"> <!--For some reasone needed-->
+                    <label for="temp_unit" style="width: 100%;">Temp unit</label>
+                    <select name="temp_unit" id="temp_select">
+                        <option value="metric">Metric</option>
+                        <option value="imperial">Imperial</option>
+                        <option value="kelvin">Kelvin</option>
+                    </select>
+                </section>
+            </section>
+            
+            <!-- <section id="with_and_hight_inputs" class="align_horisontaly">
+                <i class="material-icons">apps</i>
+                <section class="align_horisontaly">
+                    <label for="widthInput">Width/height</label>
+                    <div class="align_right align_horisontaly">
+                        <input type="number" id="widthInput" value="16" placeholder="Width">
+                        <input type="number" id="heightInput" value="16" placeholder="Height">
+                    </div>
+                </section>
+            </section> -->
+
+            <section class="align_horisontaly">
+                <i class="material-icons">schedule</i>
+                <section class="align_horisontaly">
+                    <label for="widthInput">Time offset (hours)</label>
+                    <input class="align_right" placeholder="Offset" type="number" id="time_offset" name="time_offset" min="-12" max="12" step="1" value="">
+                </section>
+            </section>
+            
+            <section class="slidecontainer">
+                <!-- <i class="material-icons">linear_scale</i> -->
+                <section id="slider_and_icons" class="space_evenly" >
+                    <i class="material-icons" style="margin: 0;">brightness_low</i>
+                    <input type="range" min="1" max="100" value="100" class="slider" id="brightness_slider">
+                    <i class="material-icons" style="margin: 0;">brightness_high</i>
+                </section>
+            </section>
+            <p id="brightness_value_p">Brightness: <span id="brightness_value"></span> %</p>
+            <div id="current_settings_output" class="align_verticaly"></div>
+            <button onclick="request_settings_reset()">Reset to default settings</button>
+            <button onclick="request_refresh_weather()">Refresh weather data</button>
+            <button onclick="display_current_settings()">Current settings</button>
+            <button class="green_hover" type="button" onclick="send_settings()">Upload changes</button>
+        </article>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 lightbox-Torbjørn L. Birkeland</p>
+    </footer>
+
+    <!-- Start of javascript -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        let slider = document.getElementById("brightness_slider");
+        let output = document.getElementById("brightness_value");
+        let colorPicker = document.getElementById("color_picker");
+        const pixelContainer = document.getElementById("pixelGrid"); // Get the container element for the pixels
+        let isMouseDown = false; // Flag to track mouse state
+        output.innerHTML = slider.value; // Display the default slider value on start
+        const NUM_PIXELS = 256;
+        const SERVER_URL = window.location.origin
+        //const SERVER_URL = "http://192.168.10.146"
+        let pixelColors = [];
+
+        // Creates grid upon first load
+        $(document).ready(function () {
+            create_pixel_grid("black")
+        });
+        
+        // Set color picker value
+        function set_color_picker(color) {
+            colorPicker.value = color;
+        }
+
+        // Update the current slider value (each time you drag the slider handle)
+        slider.oninput = function() {
+            output.innerHTML = this.value;
+        }
+
+        function request_settings_reset() {
+            // Display a confirmation dialog
+            let confirmation = window.confirm("Are you sure you want to reset the settings?");
+            
+            // If the user confirms, proceed with the reset
+            if (confirmation) {
+                let link = SERVER_URL + "/settings?type=revert";
+                // Send get request
+                get_request(link);
+            } else {
+                // If the user cancels, do nothing or provide feedback
+                console.log("Settings reset cancelled.");
+            }
+        }
+
+        function request_refresh_weather() {
+            let link = SERVER_URL + "/refresh_weather";
+            // Send get request
+            get_request(link);
+        }
+
+        // Send new settings to matrix
+        function send_settings() {
+            // Get values
+            let brightness = document.getElementById("brightness_slider").value;
+            let lon = document.getElementById("lon_input").value;
+            let lat = document.getElementById("lat_input").value;
+            let temp_unit = document.getElementById("temp_select").value;
+            let timezone_offset = document.getElementById("time_offset").value;
+            
+            console.log("val: "+ timezone_offset )
+            // Where to send
+            let link = SERVER_URL + "/settings?type=change&brightness=" + brightness + "&units=" + temp_unit;
+
+            // Add lon and lat if given
+            if (lon != "") {
+                link += "&lon=" + lon;
+            }
+            if (lat != "") {
+                link += "&lat=" + lat;
+            }
+
+            // Add timezone offset if given
+            if (timezone_offset != "") {
+                link += "&timezone_offset=" + timezone_offset*3600;
+            }
+            
+            // Send get request
+            get_request(link)
+        }
+
+        function get_settings_data() {
+            // Make a GET request to fetch temperature units from the server
+            const url = SERVER_URL + "/settings?type=inf";
+            return get_request(url,"json")
+        }
+
+        // Change the event position (button count)
+        function adjust_event_pos(increment) {
+            const url = SERVER_URL + "/event_pos?increment=" + increment;
+            // Send get request
+            get_request(url)
+        }
+        
+        function display_current_settings() {
+            let display_output = document.getElementById("current_settings_output")
+            get_settings_data()
+            .then(data => {
+                // Now you can use the received data as needed in your client-side code
+                console.log(data["location"])
+                display_output.innerHTML = `<h3 class="separation-line" style="padding-top: 5%;">Current settings</h3> <p ><strong>Location:</strong> lon: ${data['location']['lon']} lat: ${data['location']['lat']}</p> <p><strong>Temp unit:</strong> ${data['units']}</p> <p><strong>Timezone offset:</strong> ${data['location']['timezone_offset']/3600} hour(s)</p>`;    
+            });
+        }
+
+        function get_image_names() {
+            // Get data to the images that are saved on the matrix
+            const url = SERVER_URL + "/images?type=inf";
+            console.log("Fetching images from:", url);
+            get_request(url)
+            // Waiting for response
+            .then(imageData => {
+                let filenames_array = imageData.split("\n")
+                display_image_names(filenames_array)
+            });
+        }
+        function get_image_data(filename) {
+            // Get data to the images that are saved on the matrix
+            const url = SERVER_URL + "/images?type=data&filename="+filename;
+            get_request(url)
+            // Waiting for response
+            .then(imageData => {
+                let filenames_array = imageData.split("\n")
+                // Display image
+                display_ppm_content(imageData,16,16)
+            })
+        }
+
+        function del_file(filename) {
+            // Request the deletion of an image file
+            const url = SERVER_URL + "/images?type=del&filename="+filename;
+            console.log("Fetching images from:", url);
+            get_request(url)
+            
+            // Waiting for response
+            .then(imageData => {
+                console.log("Success, file deleted" + filenames_array);       
+            })
+
+            // Update the images that are shown
+            get_image_names()
+        }
+
+        function display_image_names(names) {
+            // Generate HTML to display all the saved images on the matrix
+            let display_output = document.getElementById("display_images");
+            display_output.innerHTML = ""; // Clead output
+            // If there are no images
+            if (names.length === 1 && names[0] === "") {
+                display_output.innerHTML += "<p>No images saved on led matrix</p>";
+            }
+            // Generate html
+            else {
+                for (let i = 0; i < names.length; i++) {
+                    display_output.innerHTML += `<section class="align_verticaly image_section"><button type="button" onclick="get_image_data('${names[i]}')">${names[i]}</button><button type="button" class="del_button" onclick="del_file('${names[i]}')"><i class="material-icons">delete</i>Delete image</button></section>`;
+                }
+            }
+        }
+  
+        // Function to set color on matrix/grid
+        function fill_color() {
+            const color = $("#color_picker").val()
+            create_pixel_grid(color)
+        }
+
+        // Fills the entire grid with a single color
+        function create_pixel_grid(color) {
+            const pixelGrid = document.getElementById('pixelGrid');
+            pixelGrid.innerHTML = ''; // Clear previous content
+
+            for (let i = 0; i < NUM_PIXELS; i++) {
+                pixelGrid.innerHTML += `<div id='pixel-${i}' class='pixel' style="background-color: ${color}"></div>`;
+            }
+        }
+
+        // Updates variable where color information is stored
+        function updatePixels() {
+        pixelColors = [];
+            for (let i = 0; i < NUM_PIXELS; i++) {
+                const color = getComputedStyle(document.getElementById(`pixel-${i}`)).backgroundColor;
+
+                // Extract RGB values from the string
+                const rgb = color.match(/\d+/g);
+
+                // Convert RGB values to integers and add to the pixelColors array
+                if (rgb && rgb.length === 3) {
+                pixelColors.push([parseInt(rgb[0]), parseInt(rgb[1]), parseInt(rgb[2])]);
+                } else {
+                // If RGB extraction fails, push black color as a fallback
+                pixelColors.push([0, 0, 0]);
+                }
+            }
+        }
+
+        /* Generates PPM P3 content from a canvas */
+        function generatePPM(canvas) {
+            const ctx = canvas.getContext('2d');
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+
+            const ppmData = [];
+            ppmData.push(`P3\n${canvas.width} ${canvas.height}\n255`);
+
+            for (let i = 0; i < imageData.length; i += 4) {
+                const r = imageData[i];
+                const g = imageData[i + 1];
+                const b = imageData[i + 2];
+                ppmData.push(`${r} ${g} ${b}`);
+            }
+
+            return ppmData.join('\n');
+        }
+
+        // Convert to ppm with apropriate format for transfer
+        function convertToPPM() {
+            const ppmData = [];
+            ppmData.push(`------WebKitFormBoundary1234567891234567\r\nContent-Disposition: form-data; name="file"; filename="paintedPPM.ppm"\r\nContent-Type: image/x-portable-pixmap\r\n\r\nP3\n16 16\n255`);
+
+            for (let i = 0; i < NUM_PIXELS; i++) {
+                const [r, g, b] = pixelColors[i];
+                ppmData.push(`${r} ${g} ${b}`);
+            }
+            ppmData.push('\r------WebKitFormBoundary1234567891234567--\r\n') // End marker
+            const ppmContent = ppmData.join('\n');
+            
+            return ppmContent
+        }
+
+        /* Displays a pixel grid on the webpage */
+        function display_ppm_content(ppmContent, width, height,display_output="pixelGrid") {
+            const pixelGrid = document.getElementById(display_output);
+            pixelGrid.innerHTML = ''; // Clear previous content
+
+            // Parse PPM content to get pixel values
+            const lines = ppmContent.trim().split('\n').slice(3);
+            const pixels = lines.map(line => line.split(' ').map(Number));
+
+            // Create div elements for each pixel
+            let pixel_num = 0
+            for (let i = 0; i < height; i++) {
+                for (let j = 0; j < width; j++) {
+                    const pixelDiv = document.createElement('div');
+                    pixelDiv.classList.add('pixel');
+                    pixelDiv.id = "pixel-" + pixel_num
+
+                    // Set background color based on pixel values
+                    const [r, g, b] = pixels[i * width + j];
+                    pixelDiv.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+
+                    // Append the pixel div to the pixel grid
+                    pixelGrid.appendChild(pixelDiv);
+                    pixel_num ++
+                }
+            }
+        }
+        
+        function convert_image_to_PPM(display,upload=false) {
+            const inputElement = document.getElementById('imageInput');
+            const file = inputElement.files[0];
+            
+            // Alerts client
+            if (!file) {
+                alert('Please choose an image file.');
+                return;
+            }
+
+            //const width = parseInt(document.getElementById('widthInput').value);
+            //const height = parseInt(document.getElementById('heightInput').value);
+            const width = 16
+            const height = 16
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                // Step 1: Load the chosen image and create an Image object
+                const img = new Image();
+                img.onload = function () {
+                    // Step 2: Create a canvas, resize it, and draw the image onto the canvas
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+
+                    // Resize the canvas
+                    canvas.width = width;
+                    canvas.height = height;
+
+                    // Draw the image onto the canvas
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // Step 3: Generate PPM content from the canvas
+                    const ppmContent = generatePPM(canvas);
+
+                    if (display==true) {
+                        // Display the pixel grid
+                        display_ppm_content(ppmContent, width, height);
+                    }
+                    if (upload==true) {
+                        // Step 4: Save PPM content as Blob
+                        const ppmBlob = new Blob([ppmContent], { type: 'image/x-portable-pixmap' });
+
+                        // Step 5: Extract original filename
+                        const originalFilename = file.name;
+
+                        // Step 6: Create new filename with ".ppm" extension
+                        const newFilename = originalFilename.replace(/\.[^/.]+$/, "") + ".ppm";
+
+                        // Step 7: Create FormData for file upload
+                        const formData = new FormData();
+
+                        // Step 8: Append the file with the new filename
+                        formData.append("file", ppmBlob, newFilename);
+
+                        // Step 9: Upload the file
+                        //uploadFile(formData);
+                        upload_file(formData);
+                    }
+                };
+                // Set the source of the Image object to the chosen image
+                img.src = e.target.result;
+            };
+            // Read the chosen image as a data URL
+            reader.readAsDataURL(file);
+        }
+        function upload_file(file) {
+            // DENNE FUNGERER!
+            const url = SERVER_URL + "/file?type=upload_image";
+            post_request(url, file)
+        }
+
+        function convert_div_and_send() {
+            // Update pixel array
+            updatePixels()
+            // Convert to PPM P3 file format
+            let ppmContent = convertToPPM()
+
+            // Send file
+            upload_file(ppmContent)
+            console.log("done")
+        }
+
+        // Function for making get requests
+        function get_request(url, response_encoding) {
+            return fetch(url, { method: 'GET' }) // Adjust the URL and port number as per your server setup
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                // Return request with json encoding
+                if (response_encoding === "json") {
+                    console.log("json encoding")
+                    return response.json(); // Parse the response as JSON
+                }
+                // Retuirn response, encoded as text
+                else {
+                    console.log("text encoding")
+                    return response.text();
+                } 
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+        }
+
+        // Function for making post requests
+        function post_request(url, file) {
+            fetch(url, {
+                method: 'POST', // Specify the request method
+                headers: {
+                    'Content-Type': 'multipart/form-data', // Specify the content type
+                    // You may include additional headers here if needed
+                },
+                body: file, 
+                })
+                .then(response => {
+                    // If an error occurs
+                    if (!response.ok) {
+                        if (response.status === 507) {
+                            console.warn("507 (Insufficient Storage)")
+                            alert("Too many files are stored on Matrix, the limit is 10 images. Please delete an image to download")
+                        }
+                        else {
+                            throw new Error('Network response was not ok');
+                        }
+                    }
+                    // Is post was successful
+                    else {
+                        console.log('POST request succeeded with response:', response);
+                        alert("File uploaded successfully!");
+                    }
+                    return response.text(); // Parse the response as text
+                })
+                .catch(error => {
+                        console.error('There was a problem with the POST request:', error);
+                        alert("File upload might have failed. (Maximum stored images is 10)");
+                        throw error; // Re-throw the error to propagate it to the caller
+                });
+        }
+
+        /*
+        Input for painting matrix grid
+        */
+        //When client change color of individual pixel
+        $(document).on("click", ".pixel", function () {
+            //e.preventDefault(); // Prevent default touch behavior (e.g., scrolling)
+            const color = $("#color_picker").val();
+            $(this).css("background-color", color);
+        });
+
+
+        // Mouse
+        $(document).on("mousedown", ".pixel", function () {
+            isMouseDown = true; // Set flag when mouse button is pressed
+        });
+
+        $(document).on("mouseup", function () {
+            isMouseDown = false; // Reset flag when mouse button is released
+        });
+
+        $(document).on("mouseover", ".pixel", function () {
+            if (isMouseDown) {
+                const color = $("#color_picker").val();
+                $(this).css("background-color", color);
+            }
+        });
+        
+        // Touch devices
+        // Add touch event listeners to the pixel container
+        pixelContainer.addEventListener("touchstart", function (e) {
+            
+            isMouseDown = true; // Set flag when touch starts
+        });
+
+        pixelContainer.addEventListener("touchend", function () {
+            isMouseDown = false; // Reset flag when touch ends
+        });
+
+        pixelContainer.addEventListener("touchmove", function (e) {
+            e.preventDefault(); // Prevent default touch behavior (e.g., scrolling)
+            if (isMouseDown) {
+                const color = $("#color_picker").val();
+                const touchedElement = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
+                if ($(touchedElement).hasClass("pixel")) {
+                    $(touchedElement).css("background-color", color);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
