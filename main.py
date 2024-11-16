@@ -254,6 +254,8 @@ def main():
             connection_ok = lightbox_internett.connect_internett(hostname)
             time.sleep(3)
         
+        get_location_inf() # Set location based on IP address. Also updates timezone and timezone offset
+        
         # Define a function to be used as a callback for the timer
         def close_server_callback(timer):
             """ Callback function. Stop server and set task=2 """
@@ -285,7 +287,7 @@ def main():
                             get_weather_data()
                             counter = 1
                         else:
-                            print("Update started")
+                            #print("Update started")
                             update_system_data() # Update all system data
                             counter = 2
                         
